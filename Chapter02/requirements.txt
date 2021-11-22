@@ -1,2 +1,3 @@
 flask==0.10.1
 nose
+Flask==0.10.1

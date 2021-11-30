@@ -1,4 +1,5 @@
 from flask import Flask, abort
+from flask import render_template
 from flask import jsonify
 from flask import make_response, url_for
 from flask import request
@@ -169,7 +170,7 @@ def list_tweets():
  if len(data) != 0:
   for row in data:
    tweets = {}
-   tweets['Tweet By'] = row[0]
+   tweets['TweetBy'] = row[0]
    tweets['Body'] = row[1]
    tweets['Timestamp'] = row[2]
    tweets['id'] = row[3]
@@ -227,6 +228,14 @@ def list_tweet(user_id):
   user['tweet_time'] = data[0][3]
   conn.close()
  return jsonify(user)
+
+@app.route('/adduser')
+def adduser():
+ return render_template('adduser.html')
+
+@app.route('/addtweets')
+def addtweetjs():
+ return render_template('addtweets.html')
 
 if __name__ == "__main__":
  app.run(host='0.0.0.0', port=5000, debug=True)

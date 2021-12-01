@@ -1,14 +1,17 @@
-from flask import Flask, abort
+from flask import Flask, abort, session
 from flask import render_template
 from flask import jsonify
 from flask import make_response, url_for
-from flask import request
+from flask import request, redirect
 import json
 import datetime
 import sqlite3
+from flask_cors import CORS, cross_origin
 
 app = Flask(__name__)
 app.config['JSONIFY_PRETTYPRINT_REGULAR']=False
+CORS(app)
+app.secret_key = 'key'
 
 @app.errorhandler(404)
 def resource_not_found(error):
@@ -236,6 +239,26 @@ def adduser():
 @app.route('/addtweets')
 def addtweetjs():
  return render_template('addtweets.html')
+
+@app.route('/')
+def main():
+ return render_template('main.html')
+
+@app.route('/addname')
+def addname():
+ if request.args.get('yourname'):
+  session['name'] = request.args.get('yourname')
+  # And then redirect the user to the main page
+  return redirect(url_for('main'))
+ else:
+  return render_template('addname.html', session=session)
+
+@app.route('/clear')
+def clearsession():
+ # Clear the session
+ session.clear()
+ # Redirect the user to the main page
+ return redirect(url_for('main'))
 
 if __name__ == "__main__":
  app.run(host='0.0.0.0', port=5000, debug=True)

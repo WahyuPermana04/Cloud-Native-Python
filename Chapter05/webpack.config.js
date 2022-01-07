@@ -1,5 +1,6 @@
 module.exports = {
     entry: "./static/main.js",
+    devtool: 'source-map',
     output: {
         path: __dirname + "/static/build/",
         filename: "bundle.js"
@@ -13,3 +14,4 @@ module.exports = {
         ]
     }
 };
+

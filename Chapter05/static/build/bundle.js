@@ -59,7 +59,7 @@
 	
 	var _TweetList2 = _interopRequireDefault(_TweetList);
 	
-	var _reactCookie = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"react-cookie\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
+	var _reactCookie = __webpack_require__(/*! react-cookie */ 4);
 	
 	var _reactCookie2 = _interopRequireDefault(_reactCookie);
 	
@@ -80,55 +80,53 @@
 	    var _this = _possibleConstructorReturn(this, (Main.__proto__ || Object.getPrototypeOf(Main)).call(this, props));
 	
 	    _this.state = { userId: _reactCookie2.default.load('session') };
-	    _this.state = { tweets: [] };
+	    _this.state = { tweets: [{ 'id': 1, 'username': 'guest', 'body': '"Listen to your heart. It knows all things." - Paulo Coelho #Motivation' }] };
 	    return _this;
 	  }
-	  // function to post tweets
-	
 	
 	  _createClass(Main, [{
 	    key: "addTweet",
 	    value: function addTweet(tweet) {
-	      var self = this;
-	      $.ajax({
-	        url: '/api/v2/tweets',
-	        contentType: 'application/json',
-	        type: 'POST',
-	        data: JSON.stringify({
-	          'username': "Saussiona55",
-	          'body': tweet
-	        }),
-	        success: function success() {
-	          alert("success");
-	          var newTweetList = self.state.tweets;
-	          newTweetList.unshift({ tweetedby: "Saussiona55", body: tweet, timestamp: Date.now });
-	          self.setState({ tweets: newTweetList });
-	          return;
-	        },
-	        error: function error() {
-	          return console.log("Failed");
-	        }
-	      });
+	      var newTweet = this.state.tweets;
+	      newTweet.unshift({ 'id': Date(), 'username': 'guest', 'body': tweet });
+	      this.setState({ tweets: newTweet });
 	    }
-	    // function to pull tweets
+	
+	    /*
+	    addTweet(tweet){
+	        var self = this;
+	        $.ajax({
+	          url: '/api/v2/tweets/',
+	          contentType: 'application/json',
+	          type: 'POST',
+	          data: JSON.stringify({
+	            'username': "test",
+	            'body': tweet,
+	          }),
+	          success: function(data) {
+	               return console.log("success");
+	          },
+	          error: function() {
+	            return console.log("Failed");
+	          }
+	        });
+	       }
+	       */
 	
 	  }, {
 	    key: "componentDidMount",
 	    value: function componentDidMount() {
 	      var self = this;
-	      $.getJSON('/api/v2/tweets', function (tweetModels) {
-	        var t = tweetModels;
-	        // var t = $.map(tweetModels, function(item) {
-	        //     return item;
-	        //  });
-	        alert(t);
-	        self.setState({ tweets: t });
+	      $.ajax({ url: '/api/v2/tweets',
+	        success: function success(data) {
+	          //self.setState({tweets: data['tweets_list']});
+	          //alert(self.state.tweets);
+	          return console.log("success");
+	        },
+	        error: function error() {
+	          return console.log("Failed");
+	        }
 	      });
-	
-	      // $.ajax("/api/v2/tweets")
-	      // //  .success(data => this.setState({tweets: data}))
-	      //  .success(alert(data))
-	      //  .error(error => console.log(error));
 	    }
 	  }, {
 	    key: "render",
@@ -136,8 +134,13 @@
 	      return React.createElement(
 	        "div",
 	        null,
+	        React.createElement(
+	          "h3",
+	          null,
+	          "Welcome to cloud-native-app!"
+	        ),
 	        React.createElement(_Tweet2.default, { sendTweet: this.addTweet.bind(this) }),
-	        React.createElement(_TweetList2.default, { tweet: this.state.tweets })
+	        React.createElement(_TweetList2.default, { tweets: this.state.tweets })
 	      );
 	    }
 	  }]);
@@ -148,7 +151,6 @@
 	var documentReady = function documentReady() {
 	  ReactDOM.render(React.createElement(Main, null), document.getElementById('react'));
 	};
-	
 	$(documentReady);
 
 /***/ },
@@ -207,7 +209,7 @@
 	            ),
 	            React.createElement(
 	              "ul",
-	              { id: "nav-mobile", className: "right hide-on-med-and-down" },
+	              { id: "nav-mobile", className: "right" },
 	              React.createElement(
 	                "li",
 	                null,
@@ -255,6 +257,22 @@
 	        )
 	      );
 	    }
+	    /*
+	    render(){
+	    return(
+	           <div className="row">
+	         <form onSubmit={this.sendTweet.bind(this)}>
+	          <div className="input-field">
+	            <textarea ref="tweetTextArea" className="materialize-textarea" />
+	            <label>How you doing?</label>
+	              <button className="btn waves-effect waves-lightright">Tweet now <i className="material-icons right">send</i></button>
+	          </div>
+	         </form>
+	       </div>
+	      );
+	    }
+	    */
+	
 	  }]);
 	
 	  return Tweet;
@@ -303,8 +321,8 @@
 	  _createClass(TweetList, [{
 	    key: "render",
 	    value: function render() {
-	      var tweetlist = this.props.tweet.map(function (tweet) {
-	        return React.createElement(_templatetweet2.default, _extends({ key: tweet.timestamp }, tweet));
+	      var tweetlist = this.props.tweets.map(function (tweet) {
+	        return React.createElement(_templatetweet2.default, _extends({ key: tweet.id }, tweet));
 	      });
 	      return React.createElement(
 	        "div",
@@ -367,7 +385,7 @@
 	        React.createElement(
 	          "span",
 	          { className: "title" },
-	          this.props.tweetedby
+	          this.props.username
 	        ),
 	        React.createElement(
 	          "p",
@@ -377,7 +395,7 @@
 	        React.createElement(
 	          "p",
 	          null,
-	          this.props.timestamp
+	          this.props.id
 	        )
 	      );
 	    }
@@ -387,6 +405,227 @@
 	}(React.Component);
 	
 	exports.default = Tweettemplate;
+
+/***/ },
+/* 4 */
+/*!*********************************!*\
+  !*** ./~/react-cookie/index.js ***!
+  \*********************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	var cookie = __webpack_require__(/*! cookie */ 5);
+	
+	var _cookies = cookie.parse((typeof document !== 'undefined') ? document.cookie : '');
+	
+	for (var key in _cookies) {
+	  try {
+	    _cookies[key] = JSON.parse(_cookies[key]);
+	  } catch(e) {
+	    // Not serialized object
+	  }
+	}
+	
+	function load(name) {
+	  return _cookies[name];
+	}
+	
+	function save(name, val, opt) {
+	  _cookies[name] = val;
+	
+	  // Cookies only work in the browser
+	  if (typeof document === 'undefined') return;
+	
+	  // allow you to work with cookies as objects.
+	  // make sure a serialized value returns as serialized again
+	  if (typeof val === 'object' || typeof val === 'string') val = JSON.stringify(val);
+	
+	  document.cookie = cookie.serialize(name, val, opt);
+	}
+	
+	function remove(name) {
+	  if (typeof document === 'undefined') return;
+	  document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+	}
+	
+	var reactCookie = {
+	  load: load,
+	  save: save,
+	  remove: remove
+	};
+	
+	if (true) {
+	  module.exports = reactCookie
+	}
+	
+	if (typeof window !== 'undefined') {
+	  window['reactCookie'] = reactCookie;
+	}
+
+
+/***/ },
+/* 5 */
+/*!***************************!*\
+  !*** ./~/cookie/index.js ***!
+  \***************************/
+/***/ function(module, exports) {
+
+	/*!
+	 * cookie
+	 * Copyright(c) 2012-2014 Roman Shtylman
+	 * Copyright(c) 2015 Douglas Christopher Wilson
+	 * MIT Licensed
+	 */
+	
+	/**
+	 * Module exports.
+	 * @public
+	 */
+	
+	exports.parse = parse;
+	exports.serialize = serialize;
+	
+	/**
+	 * Module variables.
+	 * @private
+	 */
+	
+	var decode = decodeURIComponent;
+	var encode = encodeURIComponent;
+	
+	/**
+	 * RegExp to match field-content in RFC 7230 sec 3.2
+	 *
+	 * field-content = field-vchar [ 1*( SP / HTAB ) field-vchar ]
+	 * field-vchar   = VCHAR / obs-text
+	 * obs-text      = %x80-FF
+	 */
+	
+	var fieldContentRegExp = /^[\u0009\u0020-\u007e\u0080-\u00ff]+$/;
+	
+	/**
+	 * Parse a cookie header.
+	 *
+	 * Parse the given cookie header string into an object
+	 * The object has the various cookies as keys(names) => values
+	 *
+	 * @param {string} str
+	 * @param {object} [options]
+	 * @return {object}
+	 * @public
+	 */
+	
+	function parse(str, options) {
+	  if (typeof str !== 'string') {
+	    throw new TypeError('argument str must be a string');
+	  }
+	
+	  var obj = {}
+	  var opt = options || {};
+	  var pairs = str.split(/; */);
+	  var dec = opt.decode || decode;
+	
+	  pairs.forEach(function(pair) {
+	    var eq_idx = pair.indexOf('=')
+	
+	    // skip things that don't look like key=value
+	    if (eq_idx < 0) {
+	      return;
+	    }
+	
+	    var key = pair.substr(0, eq_idx).trim()
+	    var val = pair.substr(++eq_idx, pair.length).trim();
+	
+	    // quoted values
+	    if ('"' == val[0]) {
+	      val = val.slice(1, -1);
+	    }
+	
+	    // only assign once
+	    if (undefined == obj[key]) {
+	      obj[key] = tryDecode(val, dec);
+	    }
+	  });
+	
+	  return obj;
+	}
+	
+	/**
+	 * Serialize data into a cookie header.
+	 *
+	 * Serialize the a name value pair into a cookie string suitable for
+	 * http headers. An optional options object specified cookie parameters.
+	 *
+	 * serialize('foo', 'bar', { httpOnly: true })
+	 *   => "foo=bar; httpOnly"
+	 *
+	 * @param {string} name
+	 * @param {string} val
+	 * @param {object} [options]
+	 * @return {string}
+	 * @public
+	 */
+	
+	function serialize(name, val, options) {
+	  var opt = options || {};
+	  var enc = opt.encode || encode;
+	
+	  if (!fieldContentRegExp.test(name)) {
+	    throw new TypeError('argument name is invalid');
+	  }
+	
+	  var value = enc(val);
+	
+	  if (value && !fieldContentRegExp.test(value)) {
+	    throw new TypeError('argument val is invalid');
+	  }
+	
+	  var pairs = [name + '=' + value];
+	
+	  if (null != opt.maxAge) {
+	    var maxAge = opt.maxAge - 0;
+	    if (isNaN(maxAge)) throw new Error('maxAge should be a Number');
+	    pairs.push('Max-Age=' + maxAge);
+	  }
+	
+	  if (opt.domain) {
+	    if (!fieldContentRegExp.test(opt.domain)) {
+	      throw new TypeError('option domain is invalid');
+	    }
+	
+	    pairs.push('Domain=' + opt.domain);
+	  }
+	
+	  if (opt.path) {
+	    if (!fieldContentRegExp.test(opt.path)) {
+	      throw new TypeError('option path is invalid');
+	    }
+	
+	    pairs.push('Path=' + opt.path);
+	  }
+	
+	  if (opt.expires) pairs.push('Expires=' + opt.expires.toUTCString());
+	  if (opt.httpOnly) pairs.push('HttpOnly');
+	  if (opt.secure) pairs.push('Secure');
+	
+	  return pairs.join('; ');
+	}
+	
+	/**
+	 * Try decoding a string using a decoding function.
+	 *
+	 * @param {string} str
+	 * @param {function} decode
+	 * @private
+	 */
+	
+	function tryDecode(str, decode) {
+	  try {
+	    return decode(str);
+	  } catch (e) {
+	    return str;
+	  }
+	}
+
 
 /***/ }
 /******/ ]);

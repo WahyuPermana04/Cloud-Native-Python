@@ -3,9 +3,9 @@ export default class Tweettemplate extends React.Component {
     return(
       <li className="collection-item avatar">
         <i className="material-icons circle red">play_arrow</i>
-        <span className="title">{this.props.tweetedby}</span>
+        <span className="title">{this.props.username}</span>
         <p>{this.props.body}</p>
-        <p>{this.props.timestamp}</p>
+        <p>{this.props.id}</p>
       </li>
       );
     }

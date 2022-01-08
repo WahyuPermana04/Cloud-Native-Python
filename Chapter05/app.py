@@ -14,8 +14,7 @@ from time import gmtime, strftime
 from flask_mongoalchemy import MongoAlchemy
 #from flask.ext.mongoalchemy import MongoAlchemy
 #import hashlib
-#hashlib.sha256(str(random.getrandbits(256)).encode('utf-8')).hexdigest()
-#'cd183a211ed2434eac4f31b317c573c50e6c24e3a28b82ddcb0bf8bedf387a9f'
+#from django.contrib.auth.decorators import login_required
 
 
 # Object creation
@@ -102,7 +101,7 @@ def profile():
     if request.method=='GET':
         users = connection.cloud_native.users
         user=[]
-        print (session['username'])
+        print (session['logged_in'])
         existing_user = users.find({"username":session['logged_in']})
         for i in existing_user:
             user.append(i)
@@ -171,13 +170,6 @@ def home():
 @app.route('/index')
 def index():
 	return render_template('index.html')
-
-@app.route('/home')
-def home2():
-        if not session.get('logged_in'):
-                return render_template('login.html')
-        else:
-                return render_template('index2.html', session = session['usernam$
 
 
 #cookie = flask.request.cookies.get('my_cookie')
